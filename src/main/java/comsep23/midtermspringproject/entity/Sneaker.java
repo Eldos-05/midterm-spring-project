@@ -1,9 +1,10 @@
 package comsep23.midtermspringproject.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,11 +25,13 @@ public class Sneaker {
     private String model;
 
     @Column(nullable = false)
-    @Min(value = 0, message = "Price must be greater than or equal to 0")
     private double price;
 
     @Override
     public String toString() {
         return "Sneaker{id=" + id + ", name='" + name + "', brand='" + brand + "', model='" + model + "', price=" + price + "}";
     }
+
+    @OneToMany(mappedBy = "sneaker")
+    private List<BasketItem> basketItems;
 }

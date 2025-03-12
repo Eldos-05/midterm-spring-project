@@ -25,5 +25,6 @@ import lombok.*;
     @Column(unique = true, nullable = false)
     private String email;
 
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Basket basket;
 }

@@ -3,6 +3,8 @@ package comsep23.midtermspringproject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,13 +17,13 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", nullable = false)
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "sneaker_id", nullable = false)
-    private Sneaker sneaker;
+    @OneToMany(mappedBy = "basket", cascade = CascadeType.ALL)
+    private List<BasketItem> items;
 
 
 }
