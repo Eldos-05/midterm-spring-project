@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface SneakerRepository extends CrudRepository<Sneaker, Long> {
+    List<Sneaker> findAll(Sneaker sneaker);
 }
