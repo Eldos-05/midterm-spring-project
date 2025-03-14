@@ -12,6 +12,8 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "sneakers")
 public class Sneaker {
 
@@ -30,7 +32,7 @@ public class Sneaker {
     @Column(nullable = false)
     private double price;
 
-    public Long getId() {
+    /*public Long getId() {
         return id;
     }
     public void setId(Long id) {
@@ -60,7 +62,7 @@ public class Sneaker {
     }
     public void setPrice(double price) {
         this.price = price;
-    }
+    }*/
 
 
     @Override
