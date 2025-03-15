@@ -27,4 +27,6 @@ import lombok.*;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Basket basket;
+
+    
 }

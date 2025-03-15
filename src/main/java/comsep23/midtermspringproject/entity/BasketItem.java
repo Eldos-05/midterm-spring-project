@@ -28,5 +28,5 @@ public class BasketItem {
     private Sneaker sneaker;
 
     private int quantity;
-
+    private double totalPrice;
 }
