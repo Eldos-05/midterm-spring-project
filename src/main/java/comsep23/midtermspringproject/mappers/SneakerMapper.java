@@ -12,4 +12,6 @@ public interface SneakerMapper {
     SneakerDTO toSneakerDTO(Sneaker sneaker);
     Sneaker toSneakerEntity(SneakerDTO sneakerDTO);
     List<SneakerDTO> toSneakerDTOList(List<Sneaker> sneakers);
+
+    Sneaker toSneaker(SneakerDTO sneakerDTO);
 }

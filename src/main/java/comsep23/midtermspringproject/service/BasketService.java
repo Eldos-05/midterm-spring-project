@@ -7,8 +7,8 @@ import comsep23.midtermspringproject.repository.BasketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BasketService {
@@ -28,7 +28,32 @@ public class BasketService {
     }
 
 
-    public List<BasketDTO>toBasketDTOList(List<Basket> baskets) {
+    public List<BasketDTO> toBasketDTOList(List<Basket> baskets) {
         return basketMapper.toBasketDTOList(baskets);
     }
+
+    public List<Basket> getAllBaskets() {
+        return basketRepository.findAll();
+    }
+
+    public Optional<Basket> getBasketById(Long id) {
+        return basketRepository.findById(id);
+    }
+
+    public Basket createBasket(Basket basket) {
+        return basketRepository.save(basket);
+    }
+
+    public Basket updateBasket(Basket basket) {
+        return basketRepository.save(basket);
+    }
+
+    public void deleteBasket(Long id) {
+        if (basketRepository.existsById(id)) {
+            basketRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Basket with id " + id + " not found.");
+        }
+    }
 }
+

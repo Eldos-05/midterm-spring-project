@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface BasketItemRepository extends JpaRepository<BasketItem, Integer> {
     List<BasketItem> findBasketItemById(Long id);
+
+    List<BasketItem> findByBasketId(Long basketId);
+
 }

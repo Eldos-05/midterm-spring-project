@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
@@ -37,4 +38,28 @@ public class SneakerService {
    public List<SneakerDTO>toSneakerDTOList(List<Sneaker> sneakers) {
         return sneakerMapper.toSneakerDTOList(sneakers);
    }
+
+    public List<Sneaker> getAllSneakers() {
+        return sneakerRepository.findAll();
+    }
+
+    public Optional<Sneaker> getSneakerById(Long id) {
+        return sneakerRepository.findById(id);
+    }
+
+    public Sneaker createSneaker(Sneaker sneaker) {
+        return sneakerRepository.save(sneaker);
+    }
+
+    public Sneaker updateSneaker(Sneaker sneaker) {
+        return sneakerRepository.save(sneaker);
+    }
+
+    public void deleteSneaker(Long id) {
+        if (sneakerRepository.existsById(id)) {
+            sneakerRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Sneaker with id " + id + " not found.");
+        }
+    }
 }
