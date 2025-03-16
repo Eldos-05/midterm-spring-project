@@ -49,4 +49,8 @@ public class UserService {
             throw new RuntimeException("User with id " + id + " not found.");
         }
     }
+
+    public Object getAllUsers() {
+        return userRepository.findAll();
+    }
 }

@@ -2,8 +2,10 @@ package comsep23.midtermspringproject.DTO;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
-@Builder
+@NoArgsConstructor
 public class UserDTO{
 
     private Long id;
