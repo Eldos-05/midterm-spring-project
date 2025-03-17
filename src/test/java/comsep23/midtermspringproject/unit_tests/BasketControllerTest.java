@@ -1,45 +1,92 @@
 package comsep23.midtermspringproject.unit_tests;
-import comsep23.midtermspringproject.controller.BasketController;
+
 import comsep23.midtermspringproject.DTO.BasketDTO;
+import comsep23.midtermspringproject.controller.BasketController;
 import comsep23.midtermspringproject.entity.Basket;
 import comsep23.midtermspringproject.mappers.BasketMapper;
 import comsep23.midtermspringproject.service.BasketService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(BasketController.class)
 public class BasketControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private BasketService basketService;
 
-    @MockBean
+    @Mock
     private BasketMapper basketMapper;
 
-    @Test
-    public void testGetAllBaskets() throws Exception {
-        List<Basket> baskets = Arrays.asList(new Basket(), new Basket());
-        when(basketService.getAllBaskets()).thenReturn(baskets);
-        when(basketMapper.toBasketDTOList(baskets)).thenReturn(Arrays.asList(new BasketDTO(), new BasketDTO()));
+    @InjectMocks
+    private BasketController basketController;
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/baskets"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray());
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(basketController).build();
+    }
+
+    @Test
+    public void testFindById_existingBasket() throws Exception {
+        Basket basket = new Basket();
+        BasketDTO basketDTO = new BasketDTO();
+        when(basketService.getBasketById(1L)).thenReturn(Optional.of(basket));
+        when(basketMapper.toBasketDTO(basket)).thenReturn(basketDTO);
+        mockMvc.perform(get("/api/baskets/1")).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFindById_nonExistingBasket() throws Exception {
+        when(basketService.getBasketById(1L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/baskets/1")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCreateBasket() throws Exception {
+        BasketDTO basketDTO = new BasketDTO();
+        Basket basket = new Basket();
+        when(basketMapper.toBasket(basketDTO)).thenReturn(basket);
+        when(basketService.createBasket(basket)).thenReturn(basket);
+        mockMvc.perform(post("/api/baskets").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(basketDTO))).andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testUpdateBasket_existingBasket() throws Exception {
+        BasketDTO basketDTO = new BasketDTO();
+        Basket basket = new Basket();
+        when(basketMapper.toBasket(basketDTO)).thenReturn(basket);
+        when(basketService.updateBasket(basket)).thenReturn(basket);
+        mockMvc.perform(put("/api/baskets/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(basketDTO))).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateBasket_nonExistingBasket() throws Exception {
+        BasketDTO basketDTO = new BasketDTO();
+        Basket basket = new Basket();
+        when(basketMapper.toBasket(basketDTO)).thenReturn(basket);
+        when(basketService.updateBasket(basket)).thenReturn(null);
+        mockMvc.perform(put("/api/baskets/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(basketDTO))).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteBasket() throws Exception {
+        mockMvc.perform(delete("/api/baskets/1")).andExpect(status().isNoContent());
+        verify(basketService, times(1)).deleteBasket(1L);
     }
 }

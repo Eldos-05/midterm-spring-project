@@ -1,47 +1,92 @@
 package comsep23.midtermspringproject.unit_tests;
 
-
-import comsep23.midtermspringproject.controller.SneakerController;
 import comsep23.midtermspringproject.DTO.SneakerDTO;
+import comsep23.midtermspringproject.controller.SneakerController;
 import comsep23.midtermspringproject.entity.Sneaker;
 import comsep23.midtermspringproject.mappers.SneakerMapper;
 import comsep23.midtermspringproject.service.SneakerService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(SneakerController.class)
 public class SneakerControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private SneakerService sneakerService;
 
-    @MockBean
+    @Mock
     private SneakerMapper sneakerMapper;
 
-    @Test
-    public void testGetAllSneakers() throws Exception {
-        List<Sneaker> sneakers = Arrays.asList(new Sneaker(), new Sneaker());
-        when(sneakerService.getAllSneakers()).thenReturn(sneakers);
-        when(sneakerMapper.toSneakerDTOList(sneakers)).thenReturn(Arrays.asList(new SneakerDTO(), new SneakerDTO()));
+    @InjectMocks
+    private SneakerController sneakerController;
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/sneakers"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray());
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(sneakerController).build();
+    }
+
+    @Test
+    public void testFindById_existingSneaker() throws Exception {
+        Sneaker sneaker = new Sneaker();
+        SneakerDTO sneakerDTO = new SneakerDTO();
+        when(sneakerService.getSneakerById(1L)).thenReturn(Optional.of(sneaker));
+        when(sneakerMapper.toSneakerDTO(sneaker)).thenReturn(sneakerDTO);
+        mockMvc.perform(get("/api/sneakers/1")).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testFindById_nonExistingSneaker() throws Exception {
+        when(sneakerService.getSneakerById(1L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/sneakers/1")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testCreateSneaker() throws Exception {
+        SneakerDTO sneakerDTO = new SneakerDTO(); // Replace with your DTO
+        Sneaker sneaker = new Sneaker(); // Replace with your Entity
+        when(sneakerMapper.toSneaker(sneakerDTO)).thenReturn(sneaker);
+        when(sneakerService.createSneaker(sneaker)).thenReturn(sneaker);
+        mockMvc.perform(post("/api/sneakers").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(sneakerDTO))).andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testUpdateSneaker_existingSneaker() throws Exception {
+        SneakerDTO sneakerDTO = new SneakerDTO();
+        Sneaker sneaker = new Sneaker();
+        when(sneakerMapper.toSneaker(sneakerDTO)).thenReturn(sneaker);
+        when(sneakerService.updateSneaker(sneaker)).thenReturn(sneaker);
+        mockMvc.perform(put("/api/sneakers/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(sneakerDTO))).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateSneaker_nonExistingSneaker() throws Exception {
+        SneakerDTO sneakerDTO = new SneakerDTO();
+        Sneaker sneaker = new Sneaker();
+        when(sneakerMapper.toSneaker(sneakerDTO)).thenReturn(sneaker);
+        when(sneakerService.updateSneaker(sneaker)).thenReturn(null);
+        mockMvc.perform(put("/api/sneakers/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(sneakerDTO))).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testDeleteSneaker() throws Exception {
+        mockMvc.perform(delete("/api/sneakers/1")).andExpect(status().isNoContent());
+        verify(sneakerService, times(1)).deleteSneaker(1L);
     }
 }
