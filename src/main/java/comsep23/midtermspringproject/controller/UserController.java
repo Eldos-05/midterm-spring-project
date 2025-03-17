@@ -1,14 +1,10 @@
 package comsep23.midtermspringproject.controller;
 
-
 import comsep23.midtermspringproject.DTO.UserDTO;
 import comsep23.midtermspringproject.entity.User;
 import comsep23.midtermspringproject.mappers.UserMapper;
-import comsep23.midtermspringproject.repository.UserRepository;
-import comsep23.midtermspringproject.service.SneakerService;
 import comsep23.midtermspringproject.service.UserService;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +18,6 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
-    private User createdUser;
 
     @Autowired
     public UserController(UserService userService, UserMapper userMapper) {
@@ -43,26 +38,25 @@ public class UserController {
         return user.isPresent()
                 ? ResponseEntity.ok(userMapper.toUserDTO(user.get()))
                 : ResponseEntity.notFound().build();
-
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
         User user = userMapper.toUser(userDTO);
-        User createUser = userService.createUser(user);
+        User createdUser = userService.createUser(user);
         UserDTO createdUserDTO = userMapper.toUserDTO(createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @Valid @RequestBody UserDTO userDTO) {
         User user = userMapper.toUser(userDTO);
         user.setId(id);
         User updatedUser = userService.updateUser(user);
-        if(updatedUser != null) {
+        if (updatedUser != null) {
             UserDTO updatedUserDTO = userMapper.toUserDTO(updatedUser);
             return ResponseEntity.ok(updatedUserDTO);
-        }else{
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
@@ -72,5 +66,4 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
 }

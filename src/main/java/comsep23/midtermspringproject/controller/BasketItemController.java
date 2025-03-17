@@ -4,6 +4,7 @@ import comsep23.midtermspringproject.DTO.BasketItemDTO;
 import comsep23.midtermspringproject.entity.BasketItem;
 import comsep23.midtermspringproject.mappers.BasketItemMapper;
 import comsep23.midtermspringproject.service.BasketItemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +41,14 @@ public class BasketItemController {
     }
 
     @PostMapping
-    public ResponseEntity<BasketItemDTO> createBasketItem(@RequestBody BasketItemDTO basketItemDTO) {
+    public ResponseEntity<BasketItemDTO> createBasketItem(@Valid @RequestBody BasketItemDTO basketItemDTO) {
         BasketItem basketItem = basketItemMapper.toBasketItem(basketItemDTO);
         BasketItem createdBasketItem = basketItemService.createBasketItem(basketItem);
         return ResponseEntity.status(HttpStatus.CREATED).body(basketItemMapper.toBasketItemDTO(createdBasketItem));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BasketItemDTO> updateBasketItem(@PathVariable Long id, @RequestBody BasketItemDTO basketItemDTO) {
+    public ResponseEntity<BasketItemDTO> updateBasketItem(@PathVariable Long id, @Valid @RequestBody BasketItemDTO basketItemDTO) {
         BasketItem basketItem = basketItemMapper.toBasketItem(basketItemDTO);
         basketItem.setId(id);
         BasketItem updatedBasketItem = basketItemService.updateBasketItem(basketItem);

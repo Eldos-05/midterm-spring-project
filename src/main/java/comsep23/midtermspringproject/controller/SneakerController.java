@@ -4,6 +4,7 @@ import comsep23.midtermspringproject.DTO.SneakerDTO;
 import comsep23.midtermspringproject.entity.Sneaker;
 import comsep23.midtermspringproject.mappers.SneakerMapper;
 import comsep23.midtermspringproject.service.SneakerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +41,14 @@ public class SneakerController {
     }
 
     @PostMapping
-    public ResponseEntity<SneakerDTO> createSneaker(@RequestBody SneakerDTO sneakerDTO) {
+    public ResponseEntity<SneakerDTO> createSneaker(@Valid @RequestBody SneakerDTO sneakerDTO) {
         Sneaker sneaker = sneakerMapper.toSneaker(sneakerDTO);
         Sneaker createdSneaker = sneakerService.createSneaker(sneaker);
         return ResponseEntity.status(HttpStatus.CREATED).body(sneakerMapper.toSneakerDTO(createdSneaker));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SneakerDTO> updateSneaker(@PathVariable Long id, @RequestBody SneakerDTO sneakerDTO) {
+    public ResponseEntity<SneakerDTO> updateSneaker(@PathVariable Long id, @Valid @RequestBody SneakerDTO sneakerDTO) {
         Sneaker sneaker = sneakerMapper.toSneaker(sneakerDTO);
         sneaker.setId(id);
         Sneaker updatedSneaker = sneakerService.updateSneaker(sneaker);

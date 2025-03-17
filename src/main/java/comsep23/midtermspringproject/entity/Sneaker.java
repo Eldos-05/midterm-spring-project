@@ -1,13 +1,13 @@
 package comsep23.midtermspringproject.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-
 
 @Entity
 @NoArgsConstructor
@@ -21,55 +21,28 @@ public class Sneaker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 50, message = "Name must be less than 50 characters")
     @Column(nullable = false)
     private String name;
 
+    @NotBlank(message = "Brand cannot be blank")
+    @Size(max = 30, message = "Brand must be less than 30 characters")
     @Column(nullable = false)
     private String brand;
 
     private String model;
 
+    @NotNull(message = "Price cannot be null")
+    @Positive(message = "Price must be a positive number")
     @Column(nullable = false)
     private double price;
 
-    /*public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getBrand() {
-        return brand;
-    }
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-    public String getModel() {
-        return model;
-    }
-    public void setModel(String model) {
-        this.model = model;
-    }
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = price;
-    }*/
-
+    @OneToMany(mappedBy = "sneaker")
+    private List<BasketItem> basketItems;
 
     @Override
     public String toString() {
         return "Sneaker{id=" + id + ", name='" + name + "', brand='" + brand + "', model='" + model + "', price=" + price + "}";
     }
-
-    @OneToMany(mappedBy = "sneaker")
-    private List<BasketItem> basketItems;
 }
