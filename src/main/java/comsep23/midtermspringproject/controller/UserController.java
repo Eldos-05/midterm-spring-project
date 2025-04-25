@@ -25,7 +25,12 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    @GetMapping
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "Welcome to Online-Store";
+    }
+
+    @GetMapping("/listOf-users")
     public ResponseEntity<List<UserDTO>> findAll() {
         List<User> users = userService.getAllUsers;
         List<UserDTO> userDTOList = userMapper.toUserDTOList(users);

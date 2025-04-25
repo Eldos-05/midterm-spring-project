@@ -1,5 +1,6 @@
 package comsep23.midtermspringproject.entity;
 
+import comsep23.midtermspringproject.config.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -34,4 +35,8 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Basket basket;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
 }

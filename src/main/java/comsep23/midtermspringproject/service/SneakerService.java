@@ -1,43 +1,42 @@
 package comsep23.midtermspringproject.service;
 
+import com.github.javafaker.Faker;
 import comsep23.midtermspringproject.DTO.SneakerDTO;
 import comsep23.midtermspringproject.entity.Sneaker;
 import comsep23.midtermspringproject.mappers.SneakerMapper;
 import comsep23.midtermspringproject.repository.SneakerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Service
-
+@RequiredArgsConstructor
 public class SneakerService {
     private final SneakerMapper sneakerMapper;
     private final SneakerRepository sneakerRepository;
+    private List<Sneaker> sneakers;
 
-    @Autowired
-    public SneakerService(SneakerRepository sneakerRepository, SneakerMapper sneakerMapper) {
-        this.sneakerRepository = sneakerRepository;
-        this.sneakerMapper = sneakerMapper;
-    }
+
     public List<SneakerDTO> getSneakerDTOs(String brand) {
-        List<Sneaker> sneakers;
+        List<Sneaker> sneakersList;
 
         if (StringUtils.hasText(brand)) {
-            sneakers = sneakerRepository.findByBrand(brand);
+            sneakersList = sneakerRepository.findByBrand(brand);
         } else {
-            sneakers = sneakerRepository.findAll();
+            sneakersList = sneakerRepository.findAll();
         }
 
-        return sneakerMapper.toSneakerDTOList(sneakers);
+        return sneakerMapper.toSneakerDTOList(sneakersList);
     }
 
-
-   public List<SneakerDTO>toSneakerDTOList(List<Sneaker> sneakers) {
-        return sneakerMapper.toSneakerDTOList(sneakers);
-   }
+    public List<SneakerDTO> toSneakerDTOList(List<Sneaker> sneakersList) {
+        return sneakerMapper.toSneakerDTOList(sneakersList);
+    }
 
     public List<Sneaker> getAllSneakers() {
         return sneakerRepository.findAll();
@@ -62,4 +61,5 @@ public class SneakerService {
             throw new RuntimeException("Sneaker with id " + id + " not found.");
         }
     }
+
 }
