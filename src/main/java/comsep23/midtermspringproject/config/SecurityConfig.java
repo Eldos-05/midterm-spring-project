@@ -21,8 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
+
 public class SecurityConfig {
 
+    private JwtRequestFilter jwtRequestFilter;
     private UserService userService;
 
     @Autowired
@@ -30,7 +32,10 @@ public class SecurityConfig {
         this.userService=userService;
     }
 
-
+    @Autowired
+    public void setJwtRequestFilter(JwtRequestFilter jwtRequestFilter) {
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -41,14 +46,14 @@ public class SecurityConfig {
                 .requestMatchers("/secured").authenticated()
                 .requestMatchers("/info").authenticated()
                 .requestMatchers("/admin").hasRole("ADMIN")
-                .requestMatchers("demo/api/users/listOf-users").hasRole("ADMIN")
-                .requestMatchers("demo/api/sneakers/{id}").hasRole("USER")
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

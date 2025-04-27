@@ -1,7 +1,6 @@
 package comsep23.midtermspringproject.unit_tests;
 
-
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import comsep23.midtermspringproject.DTO.UserDTO;
 import comsep23.midtermspringproject.controller.UserController;
 import comsep23.midtermspringproject.entity.User;
@@ -18,10 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerTest {
 
@@ -47,51 +46,66 @@ public class UserControllerTest {
     @Test
     public void testFindById_existingUser() throws Exception {
         User user = new User();
-        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
+        user.setId(1L);
+        user.setUsername("testUser");
+        user.setEmail("test@example.com");
+        UserDTO userDTO = new UserDTO(1L, "testUser", "test@example.com");
+
         when(userService.getUserById(1L)).thenReturn(Optional.of(user));
         when(userMapper.toUserDTO(user)).thenReturn(userDTO);
-        mockMvc.perform(get("/api/users/1")).andExpect(status().isOk());
+
+        mockMvc.perform(get("/api/users/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testFindById_nonExistingUser() throws Exception {
         when(userService.getUserById(1L)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/users/1")).andExpect(status().isNotFound());
+
+        mockMvc.perform(get("/api/users/1"))
+                .andExpect(status().isNotFound());
     }
 
-    @Test
-    public void testCreateUser() throws Exception {
-        User user = null;
-        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
-        user = new User();
-        when(userMapper.toUser(userDTO)).thenReturn(user);
-        when(userService.createUser(user)).thenReturn(user);
-        mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isCreated());
-    }
 
     @Test
     public void testUpdateUser_existingUser() throws Exception {
-        User user = null;
-        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
-        user = new User();
+        UserDTO userDTO = new UserDTO(1L, "updatedUser", "updated@example.com");
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("updatedUser");
+        user.setEmail("updated@example.com");
+
         when(userMapper.toUser(userDTO)).thenReturn(user);
-        when(userService.updateUser(user)).thenReturn(user);
-        mockMvc.perform(put("/api/users/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isOk());
+        when(userService.updateUser(any(User.class))).thenReturn(user);
+        when(userMapper.toUserDTO(user)).thenReturn(userDTO);
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userDTO)))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testUpdateUser_nonExistingUser() throws Exception {
-        User user = null;
-        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
-        user = new User();
+        UserDTO userDTO = new UserDTO(1L, "updatedUser", "updated@example.com");
+        User user = new User();
+        user.setId(1L);
+        user.setUsername("updatedUser");
+        user.setEmail("updated@example.com");
+
         when(userMapper.toUser(userDTO)).thenReturn(user);
-        when(userService.updateUser(user)).thenReturn(null);
-        mockMvc.perform(put("/api/users/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isNotFound());
+        when(userService.updateUser(any(User.class))).thenReturn(null);
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userDTO)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void testDeleteUser() throws Exception {
-        mockMvc.perform(delete("/api/users/1")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/api/users/1"))
+                .andExpect(status().isNoContent());
         verify(userService, times(1)).deleteUser(1L);
     }
 }

@@ -1,10 +1,11 @@
 package comsep23.midtermspringproject.service;
 
-import comsep23.midtermspringproject.DTO.RegistrationUserDTO;
+import comsep23.midtermspringproject.DTO.RegistrationUserDto;
 import comsep23.midtermspringproject.entity.User;
 import comsep23.midtermspringproject.mappers.UserMapper;
 import comsep23.midtermspringproject.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,13 +18,27 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
+    private  UserRepository userRepository;
+    private  UserMapper userMapper;
+    private  PasswordEncoder passwordEncoder;
+    private  RoleService roleService;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -38,31 +53,21 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public User createUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("User with this username already exists");
-        }
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("User with this email already exists");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(List.of(roleService.getUserRole()));
-        return userRepository.save(user);
-    }
+
 
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    public User createNewUser(RegistrationUserDTO registrationUserDto) {
+
+    public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = new User();
         user.setUsername(registrationUserDto.getUsername());
         user.setEmail(registrationUserDto.getEmail());
@@ -70,7 +75,6 @@ public class UserService implements UserDetailsService {
         user.setRoles(List.of(roleService.getUserRole()));
         return userRepository.save(user);
     }
-
     public User updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User with id " + user.getId() + " not found"));
