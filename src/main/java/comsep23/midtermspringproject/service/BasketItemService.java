@@ -18,10 +18,6 @@ public class BasketItemService {
         this.basketItemRepository = basketItemRepository;
     }
 
-    public List<BasketItem> findBasketItemsByBasketId(Long basketId) {
-        return basketItemRepository.findByBasketId(basketId);
-    }
-
     public List<BasketItem> getAllBasketItems() {
         return basketItemRepository.findAll();
     }

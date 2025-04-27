@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +30,28 @@ public class UserController {
     public String welcome() {
         return "Welcome to Online-Store";
     }
+    @GetMapping("/unsecured")
+    public String unsecuredData() {
+        return "Unsecured data";
+    }
 
+    @GetMapping("/secured")
+    public String securedData() {
+        return "Secured data";
+    }
+
+    @GetMapping("/admin")
+    public String adminData() {
+        return "Admin data";
+    }
+
+    @GetMapping("/info")
+    public String userData(Principal principal) {
+        return principal.getName();
+    }
     @GetMapping("/listOf-users")
     public ResponseEntity<List<UserDTO>> findAll() {
-        List<User> users = userService.getAllUsers;
+        List<User> users = userService.getAllUsers();
         List<UserDTO> userDTOList = userMapper.toUserDTOList(users);
         return ResponseEntity.ok(userDTOList);
     }
@@ -45,13 +64,6 @@ public class UserController {
                 : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
-        User user = userMapper.toUser(userDTO);
-        User createdUser = userService.createUser(user);
-        UserDTO createdUserDTO = userMapper.toUserDTO(createdUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDTO);
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @Valid @RequestBody UserDTO userDTO) {

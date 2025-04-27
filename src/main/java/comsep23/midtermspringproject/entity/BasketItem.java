@@ -1,6 +1,5 @@
 package comsep23.midtermspringproject.entity;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -20,15 +19,16 @@ public class BasketItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "basket_id", nullable = false)
     private Basket basket;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sneaker_id", nullable = false)
     private Sneaker sneaker;
 
     private int quantity;
-    @Positive(message = "Totalprice must be a positive number")
+
+    @Positive(message = "Total price must be a positive number")
     private double totalPrice;
 }

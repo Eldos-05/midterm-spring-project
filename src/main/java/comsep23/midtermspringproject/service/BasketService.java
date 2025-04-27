@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Service
 public class BasketService {
+
     private final BasketRepository basketRepository;
     private final BasketMapper basketMapper;
 
@@ -27,11 +28,9 @@ public class BasketService {
         return baskets;
     }
 
-
     public List<BasketDTO> toBasketDTOList(List<Basket> baskets) {
         return basketMapper.toBasketDTOList(baskets);
     }
-
     public List<Basket> getAllBaskets() {
         return basketRepository.findAll();
     }
@@ -43,7 +42,6 @@ public class BasketService {
     public Basket createBasket(Basket basket) {
         return basketRepository.save(basket);
     }
-
     public Basket updateBasket(Basket basket) {
         return basketRepository.save(basket);
     }
@@ -56,4 +54,3 @@ public class BasketService {
         }
     }
 }
-

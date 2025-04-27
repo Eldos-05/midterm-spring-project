@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@Table(name = "sneakers")
+@Table(name = "sneaker")
 public class Sneaker {
 
     @Id
@@ -36,7 +36,7 @@ public class Sneaker {
     @Column(nullable = false)
     private double price;
 
-    @OneToMany(mappedBy = "sneaker")
+    @OneToMany(mappedBy = "sneaker", cascade = CascadeType.ALL)
     private List<BasketItem> basketItems;
 
     @Override

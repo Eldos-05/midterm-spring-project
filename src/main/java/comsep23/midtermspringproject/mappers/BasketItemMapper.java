@@ -1,4 +1,3 @@
-// BasketItemMapper.java
 package comsep23.midtermspringproject.mappers;
 
 import comsep23.midtermspringproject.DTO.BasketItemDTO;

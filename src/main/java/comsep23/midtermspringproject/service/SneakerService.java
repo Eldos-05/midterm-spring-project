@@ -1,18 +1,15 @@
 package comsep23.midtermspringproject.service;
 
-import com.github.javafaker.Faker;
 import comsep23.midtermspringproject.DTO.SneakerDTO;
 import comsep23.midtermspringproject.entity.Sneaker;
 import comsep23.midtermspringproject.mappers.SneakerMapper;
 import comsep23.midtermspringproject.repository.SneakerRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor

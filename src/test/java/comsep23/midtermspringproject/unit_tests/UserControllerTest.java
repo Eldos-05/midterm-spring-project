@@ -47,7 +47,7 @@ public class UserControllerTest {
     @Test
     public void testFindById_existingUser() throws Exception {
         User user = new User();
-        UserDTO userDTO = new UserDTO();
+        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
         when(userService.getUserById(1L)).thenReturn(Optional.of(user));
         when(userMapper.toUserDTO(user)).thenReturn(userDTO);
         mockMvc.perform(get("/api/users/1")).andExpect(status().isOk());
@@ -61,8 +61,9 @@ public class UserControllerTest {
 
     @Test
     public void testCreateUser() throws Exception {
-        UserDTO userDTO = new UserDTO();
-        User user = new User();
+        User user = null;
+        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
+        user = new User();
         when(userMapper.toUser(userDTO)).thenReturn(user);
         when(userService.createUser(user)).thenReturn(user);
         mockMvc.perform(post("/api/users").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isCreated());
@@ -70,8 +71,9 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser_existingUser() throws Exception {
-        UserDTO userDTO = new UserDTO();
-        User user = new User();
+        User user = null;
+        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
+        user = new User();
         when(userMapper.toUser(userDTO)).thenReturn(user);
         when(userService.updateUser(user)).thenReturn(user);
         mockMvc.perform(put("/api/users/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isOk());
@@ -79,8 +81,9 @@ public class UserControllerTest {
 
     @Test
     public void testUpdateUser_nonExistingUser() throws Exception {
-        UserDTO userDTO = new UserDTO();
-        User user = new User();
+        User user = null;
+        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername(), user.getEmail());
+        user = new User();
         when(userMapper.toUser(userDTO)).thenReturn(user);
         when(userService.updateUser(user)).thenReturn(null);
         mockMvc.perform(put("/api/users/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userDTO))).andExpect(status().isNotFound());
