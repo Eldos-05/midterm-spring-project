@@ -26,7 +26,6 @@ public class BasketItemController {
         this.basketItemMapper = basketItemMapper;
     }
 
-    // Get all basket items
     @GetMapping
     public ResponseEntity<List<BasketItemDTO>> getAllBasketItems() {
         List<BasketItem> basketItems = basketItemService.getAllBasketItems();
@@ -34,7 +33,6 @@ public class BasketItemController {
         return ResponseEntity.ok(basketItemDTOs);
     }
 
-    // Get a basket item by its ID
     @GetMapping("/{id}")
     public ResponseEntity<BasketItemDTO> getBasketItemById(@PathVariable Long id) {
         Optional<BasketItem> basketItem = basketItemService.getBasketItemById(Math.toIntExact(id));
@@ -42,7 +40,6 @@ public class BasketItemController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Create a new basket item
     @PostMapping
     public ResponseEntity<BasketItemDTO> createBasketItem(@Valid @RequestBody BasketItemDTO basketItemDTO) {
         BasketItem basketItem = basketItemMapper.toBasketItem(basketItemDTO);
@@ -50,7 +47,6 @@ public class BasketItemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(basketItemMapper.toBasketItemDTO(createdBasketItem));
     }
 
-    // Update an existing basket item
     @PutMapping("/{id}")
     public ResponseEntity<BasketItemDTO> updateBasketItem(@PathVariable Long id, @Valid @RequestBody BasketItemDTO basketItemDTO) {
         BasketItem basketItem = basketItemMapper.toBasketItem(basketItemDTO);
@@ -61,7 +57,6 @@ public class BasketItemController {
                 : ResponseEntity.notFound().build();
     }
 
-    // Delete a basket item by its ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBasketItem(@PathVariable Long id) {
         basketItemService.deleteBasketItem(Math.toIntExact(id));

@@ -1,7 +1,6 @@
 package comsep23.midtermspringproject.config;
 
 import comsep23.midtermspringproject.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,38 +20,54 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-
 public class SecurityConfig {
 
     private JwtRequestFilter jwtRequestFilter;
     private UserService userService;
 
     @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    @Autowired
     public void setUserService(UserService userService){
-        this.userService=userService;
+        this.userService = userService;
     }
 
     @Autowired
     public void setJwtRequestFilter(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
-                .requestMatchers("demo/api/users/welcome").permitAll()
+                .requestMatchers("/demo/api/users/welcome").permitAll()
+                .requestMatchers("/login", "/oauth2/**").permitAll()
                 .requestMatchers("/secured").authenticated()
                 .requestMatchers("/info").authenticated()
                 .requestMatchers("/admin").hasRole("ADMIN")
+                .requestMatchers("/", "/profile").permitAll()
                 .anyRequest().permitAll()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
+                .oauth2Login()
+                .successHandler(oAuth2LoginSuccessHandler)
+                .and()
+//                .formLogin(form -> form
+//                        .loginPage("/login")
+//                        .permitAll()
+//                )
+//                .oauth2Login(oauth2 -> oauth2
+//                        .loginPage("/login")
+//                        .successHandler((request, response, authentication) -> response.sendRedirect("/profile")) // Redirect after successful login
+//                )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

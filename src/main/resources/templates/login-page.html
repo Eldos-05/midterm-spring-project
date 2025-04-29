@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 2rem 3rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button[type="submit"],
+        .oauth-button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #4a90e2;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        button[type="submit"]:hover,
+        .oauth-button:hover {
+            background-color: #357abd;
+        }
+
+        .oauth-login {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .oauth-button.google {
+            background-color: #db4437;
+        }
+
+        .oauth-button.github {
+            background-color: #24292e;
+        }
+
+        .oauth-button.google:hover {
+            background-color: #c33d2e;
+        }
+
+        .oauth-button.github:hover {
+            background-color: #1b1f23;
+        }
+
+        .oauth-button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        hr {
+            margin: 2rem 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>Login</h2>
+    <form th:action="@{/login}" method="post">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required/>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required/>
+        </div>
+        <button type="submit">Login</button>
+    </form>
+
+    <hr/>
+
+    <div class="oauth-login">
+        <p>Or login with</p>
+        <a th:href="@{/oauth2/authorization/google}">
+            <button type="button" class=    "oauth-button google">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo">
+                Google
+            </button>
+        </a>
+        <a th:href="@{/oauth2/authorization/github}">
+            <button type="button" class="oauth-button github">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub logo">
+                GitHub
+            </button>
+        </a>
+    </div>
+</div>
+</body>
+</html>

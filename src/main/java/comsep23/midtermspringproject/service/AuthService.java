@@ -23,28 +23,22 @@ public class AuthService {
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
 
-    // Метод для создания токена
     public ResponseEntity<?> createAuthToken(JwtRequest authRequest) {
         try {
-            // Аутентификация
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Incorrect username or password"), HttpStatus.UNAUTHORIZED);
         }
 
-        // Загружаем детали пользователя
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
 
-        // Генерация токенов
         String token = jwtTokenUtils.generateToken(userDetails);
         String refreshToken = jwtTokenUtils.generateRefreshToken(userDetails);
 
-        // Возвращаем оба токена
         return ResponseEntity.ok(new JwtResponse(token, refreshToken));
     }
 
-    // Метод для регистрации нового пользователя
     public ResponseEntity<?> createNewUser(RegistrationUserDto registrationUserDto) {
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Passwords do not match"), HttpStatus.BAD_REQUEST);
