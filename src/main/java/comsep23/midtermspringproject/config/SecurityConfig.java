@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
+                .requestMatchers("/**").permitAll()
                 .requestMatchers("/demo/api/users/welcome").permitAll()
                 .requestMatchers("/login", "/oauth2/**").permitAll()
                 .requestMatchers("/secured").authenticated()

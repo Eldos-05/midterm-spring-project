@@ -4,7 +4,6 @@ import comsep23.midtermspringproject.DTO.RegistrationUserDto;
 import comsep23.midtermspringproject.entity.User;
 import comsep23.midtermspringproject.mappers.UserMapper;
 import comsep23.midtermspringproject.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
